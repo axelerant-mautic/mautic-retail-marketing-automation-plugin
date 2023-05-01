@@ -2,45 +2,49 @@
 
 <!-- http://www.phpunit.de/manual/current/en/appendixes.configuration.html -->
 <phpunit
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/8.5/phpunit.xsd"
-    colors                      = "true"
-    failOnWarning               = "true"
-    bootstrap                   = "autoload.php" >
-
-    <testsuites>
-        <testsuite name="unit">
-            <directory>Tests/Unit</directory>
-        </testsuite>
-        <testsuite name="functional">
-            <directory>Tests/Functional</directory>
-        </testsuite>
-        <testsuite name="all">
-            <directory>Tests</directory>
-        </testsuite>
-    </testsuites>
-
-    <php>
-        <server name="KERNEL_DIR" value="../../app" />
-        <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak" />
-    </php>
-
-    <filter>
-        <whitelist>
-            <directory>*</directory>
-            <exclude>
-                <directory>Assets</directory>
-                <directory>Config</directory>
-                <directory>Tests</directory>
-                <directory>Translations</directory>
-                <directory>vendor</directory>
-            </exclude>
-        </whitelist>
-    </filter>
-
-    <listeners>
-        <listener class="\Symfony\Bridge\PhpUnit\SymfonyTestsListener" />
-        <listener class="\Mautic\CoreBundle\Test\Listeners\CleanupListener" />
-    </listeners>
-
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        backupGlobals="false"
+        backupStaticAttributes="false"
+        colors="true"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        processIsolation="false"
+        stopOnFailure="false"
+        bootstrap="autoload.php"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage>
+    <include>
+      <directory>*</directory>
+    </include>
+    <exclude>
+      <directory>Assets</directory>a
+      <directory>Config</directory>
+      <directory>Migrations</directory>
+      <directory>Tests</directory>
+      <directory>Translations</directory>
+      <directory>Views</directory>
+      <directory>vendor</directory>
+    </exclude>
+  </coverage>
+  <testsuites>
+    <testsuite name="unit">
+      <directory>Tests/Unit</directory>
+    </testsuite>
+    <testsuite name="functional">
+      <directory>Tests/Functional</directory>
+    </testsuite>
+    <testsuite name="all">
+      <directory>Tests</directory>
+    </testsuite>
+  </testsuites>
+  <php>
+    <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled"/>
+    <env name="KERNEL_CLASS" value="AppKernel"/>
+    <server name="KERNEL_DIR" value="../../app"/>
+  </php>
+  <listeners>
+    <listener class="\Symfony\Bridge\PhpUnit\SymfonyTestsListener"/>
+    <listener class="\Mautic\CoreBundle\Test\Listeners\CleanupListener"/>
+  </listeners>
 </phpunit>
