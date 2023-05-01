@@ -6,7 +6,6 @@ CONTENTS OF THIS FILE
 * Installation
 * Configuration
 * FAQ
-* Patches
 * Maintainers
 
 
@@ -25,9 +24,9 @@ Requirements
 
 Installation
 ------------
-1. Add `RetailMarketingAutomationBundle` in `plugins` directory.
+1. Add `RetailMarketingBundle` in `plugins` directory.
 2. Go to `Plugins` page
-3. Click on `Install/Upgrade Plugins` button, and install `RetailMarketingAutomation` plugin.
+3. Click on `Install/Upgrade Plugins` button, and install `RetailMarketingBundle` plugin.
 
 If you have shell access then execute `php bin\console mautic:plugins:reload` to install the plugin.
 
@@ -42,6 +41,7 @@ FAQ
 
 Maintainers
 ----------
-1. [Axelerant Technologies][AxelerantHome]
+1. Rahul Shinde, [Axelerant Technologies][AxelerantHome]
 
+[MauticHome]: <https://www.mautic.org>
 [AxelerantHome]: <https://axelerat.com>

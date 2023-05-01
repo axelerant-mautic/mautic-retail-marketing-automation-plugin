@@ -1,0 +1,38 @@
+{
+    "name": "axelerant/mautic-retail-marketing-automation-plugin",
+    "type": "library",
+    "description": "Creates and helps the Retail Marketing Automation flows in Mautic.",
+    "keywords": [
+        "mautic",
+        "plugin"
+    ],
+    "version": "1.0-dev",
+    "config": {
+        "process-timeout": 2000,
+        "platform": {
+            "php": "7.2.29"
+        }
+    },
+    "require": {
+        "php": ">=7.3 <7.5",
+        "ext-mbstring": "*",
+        "ext-json": "*"
+    },
+    "minimum-stability": "stable",
+    "scripts": {
+        "test": [
+            "@phpunit",
+            "@csfixer"
+        ],
+        "quicktest": [
+            "@unit",
+            "@csfixer"
+        ],
+        "phpunit": "../../bin/phpunit -d memory_limit=2048M --bootstrap ../../vendor/autoload.php --configuration phpunit.xml --fail-on-warning --testsuite=all",
+        "unit": "../../bin/phpunit -d memory_limit=2048M --bootstrap ../../vendor/autoload.php --configuration phpunit.xml --fail-on-warning --testsuite=unit",
+        "functional": "../../bin/phpunit -d memory_limit=2048M --bootstrap ../../vendor/autoload.php --configuration phpunit.xml --fail-on-warning --testsuite=functional",
+        "coverage": "../../bin/phpunit -d memory_limit=2048M --bootstrap ../../vendor/autoload.php --configuration phpunit.xml --fail-on-warning --testsuite=all --coverage-text --coverage-html=Tests/Coverage",
+        "csfixer": "../../bin/php-cs-fixer fix . -v --dry-run --diff --using-cache=no",
+        "fixcs": "../../bin/php-cs-fixer fix . -v --using-cache=no"
+    }
+}
