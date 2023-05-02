@@ -13,11 +13,19 @@ Introduction
 ------------
 This plugin is to add Retail Marketing automation flows into [Mautic][MauticHome] marketing automation tool.
 
+When enable this plugin will create the followings,
+1. Abandoned Cart object as custom object
+2. Segment to create a abandoned card customer list
+3. Email with token that replaces the list of products
+4. Campaign
+
+
 
 Requirements
 ------------  
 ## Mautic
 1. Mautic version 4 and onwards
+2. [Custom Object plugin][PluginCustomObjectsHome] stable version
 
 ## Retail Marketing Automation
 
@@ -45,3 +53,4 @@ Maintainers
 
 [MauticHome]: <https://www.mautic.org>
 [AxelerantHome]: <https://axelerat.com>
+[PluginCustomObjectsHome]: <https://github.com/acquia/mc-cs-plugin-custom-objects>

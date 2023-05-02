@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
+use MauticPlugin\RetailMarketingBundle\EventListener\PluginEventSubscriber;
+use MauticPlugin\RetailMarketingBundle\Helper\GenerateEntities;
 use MauticPlugin\RetailMarketingBundle\Integration\RetailMarketingIntegration;
 use MauticPlugin\RetailMarketingBundle\Integration\Support\ConfigSupport;
 
 return [
-    'name'        => 'Retail Marketing Automation',
+    'name'        => RetailMarketingIntegration::DISPLAY_NAME,
     'description' => 'Creates and helps the Retail Marketing Automation flows in Mautic.',
     'version'     => '0.0.1',
     'author'      => 'Axelerant Technologies',
@@ -27,6 +29,25 @@ return [
                 'class' => ConfigSupport::class,
                 'tags'  => [
                     'mautic.config_integration',
+                ],
+            ],
+        ],
+
+        'events' => [
+            'retail_marketing.plugin.event.subscriber' => [
+                'class'     => PluginEventSubscriber::class,
+                'arguments' => [
+                    'mautic.plugin.model.plugin',
+                    'retail_marketing.helper.generate_entities',
+                ],
+            ],
+        ],
+
+        'other' => [
+            'retail_marketing.helper.generate_entities' => [
+                'class'     => GenerateEntities::class,
+                'arguments' => [
+                    'doctrine.orm.entity_manager',
                 ],
             ],
         ],
