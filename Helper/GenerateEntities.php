@@ -5,19 +5,32 @@ declare(strict_types=1);
 namespace MauticPlugin\RetailMarketingBundle\Helper;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Mautic\LeadBundle\Entity\LeadList;
+use Mautic\UserBundle\Entity\User;
 use MauticPlugin\CustomObjectsBundle\Entity\CustomField;
 use MauticPlugin\CustomObjectsBundle\Entity\CustomObject;
 
 final class GenerateEntities
 {
     private EntityManagerInterface $entityManager;
+    private User $adminUser;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
+
+        $this->adminUser = $this->entityManager->getReference(User::class, 1);
     }
 
-    public function createCustomObjectAndFields(): void
+    public function loadDefaults(): void
+    {
+        // Custom Object
+        $abandonedProduct = $this->loadCustomObject();
+        // Segments
+        list($primaryList, $reminderList) = $this->loadSegments($abandonedProduct);
+    }
+
+    private function loadCustomObject(): CustomObject
     {
         // Create Custom Object
         $abandonedProduct = new CustomObject();
@@ -25,65 +38,121 @@ final class GenerateEntities
         $abandonedProduct->setNameSingular('Abandoned Product');
         $abandonedProduct->setNamePlural('Abandoned Products');
         $abandonedProduct->setDescription('Hold details about Abandoned Products');
+        $abandonedProduct->setCreatedByUser($this->adminUser);
 
         $this->entityManager->persist($abandonedProduct);
 
         // Create Custom Object fields
-        $cfDesc = new CustomField();
-        $cfDesc->setAlias('description');
-        $cfDesc->setIsPublished(true);
-        $cfDesc->setCustomObject($abandonedProduct);
-        $cfDesc->setLabel('Description');
-        $cfDesc->setType('textarea');
-        $cfDesc->setRequired(false);
-        $this->entityManager->persist($cfDesc);
+        $this->createCustomField($abandonedProduct, [
+            'alias' => 'description',
+            'label' => 'Description',
+            'type'  => 'textarea',
+        ]);
 
-        $cfProductLink = new CustomField();
-        $cfProductLink->setAlias('link');
-        $cfProductLink->setIsPublished(true);
-        $cfProductLink->setCustomObject($abandonedProduct);
-        $cfProductLink->setLabel('Link');
-        $cfProductLink->setType('url');
-        $cfProductLink->setRequired(false);
-        $this->entityManager->persist($cfProductLink);
+        $this->createCustomField($abandonedProduct, [
+            'alias' => 'link',
+            'label' => 'Link',
+            'type'  => 'url',
+        ]);
 
-        $cfImage = new CustomField();
-        $cfImage->setAlias('thumbnail');
-        $cfImage->setIsPublished(true);
-        $cfImage->setCustomObject($abandonedProduct);
-        $cfImage->setLabel('Thumbnail Image');
-        $cfImage->setType('url');
-        $cfImage->setRequired(false);
-        $this->entityManager->persist($cfImage);
+        $this->createCustomField($abandonedProduct, [
+            'alias' => 'thumbnail',
+            'label' => 'Thumbnail Image',
+            'type'  => 'url',
+        ]);
 
-        $cfSku = new CustomField();
-        $cfSku->setAlias('sku');
-        $cfSku->setIsPublished(true);
-        $cfSku->setCustomObject($abandonedProduct);
-        $cfSku->setLabel('SKU');
-        $cfSku->setType('text');
-        $cfSku->setRequired(false);
-        $this->entityManager->persist($cfSku);
+        $this->createCustomField($abandonedProduct, [
+            'alias' => 'sku',
+            'label' => 'SKU',
+            'type'  => 'text',
+        ]);
 
-        $cfQuantity = new CustomField();
-        $cfQuantity->setAlias('quantity');
-        $cfQuantity->setIsPublished(true);
-        $cfQuantity->setCustomObject($abandonedProduct);
-        $cfQuantity->setLabel('Quantity');
-        $cfQuantity->setType('text');
-        $cfQuantity->setRequired(false);
-        $this->entityManager->persist($cfQuantity);
+        $this->createCustomField($abandonedProduct, [
+            'alias' => 'quantity',
+            'label' => 'Quantity',
+            'type'  => 'text',
+        ]);
 
-        $cfPrice = new CustomField();
-        $cfPrice->setAlias('price');
-        $cfPrice->setIsPublished(true);
-        $cfPrice->setCustomObject($abandonedProduct);
-        $cfPrice->setLabel('Price');
-        $cfPrice->setType('text');
-        $cfPrice->setRequired(false);
-        $this->entityManager->persist($cfPrice);
+        $this->createCustomField($abandonedProduct, [
+            'alias' => 'price',
+            'label' => 'Price',
+            'type'  => 'text',
+        ]);
 
         $this->entityManager->flush();
         $this->entityManager->clear();
+
+        return $abandonedProduct;
+    }
+
+    /**
+     * @param array<string, string> $properties
+     */
+    private function createCustomField(CustomObject $abandonedProduct, array $properties): void
+    {
+        $cf = new CustomField();
+        $cf->setAlias($properties['alias']);
+        $cf->setIsPublished(true);
+        $cf->setCustomObject($abandonedProduct);
+        $cf->setLabel($properties['label']);
+        $cf->setType($properties['type']);
+        $cf->setRequired(false);
+        $cf->setCreatedByUser($this->adminUser);
+        $this->entityManager->persist($cf);
+    }
+
+    /**
+     * @return LeadList[]
+     */
+    private function loadSegments(CustomObject $abandonedProduct): array
+    {
+        $segmentDetails = [
+            'name'    => 'Abandoned Card Contacts',
+            'alias'   => 'abandoned_card_contacts',
+            'filters' => [
+                [
+                    'glue'       => 'and',
+                    'field'      => 'cmo_'.$abandonedProduct->getId(), // Name field of CO.
+                    'object'     => 'custom_object',
+                    'type'       => 'text',
+                    'operator'   => '!empty',
+                    'properties' => [
+                        'filter'  => null,
+                        'display' => null,
+                    ],
+                ],
+            ],
+        ];
+
+        $primarySegment  = $this->createSegment($segmentDetails);
+        $reminderSeg     = $this->createSegment([
+            'name'    => 'Abandoned Card Reminder',
+            'alias'   => 'abandoned_card_contacts_reminder',
+        ]);
+
+        $this->entityManager->clear();
+
+        return [$primarySegment, $reminderSeg];
+    }
+
+    /**
+     * @param array<string, mixed> $segmentDetails
+     */
+    private function createSegment(array $segmentDetails): LeadList
+    {
+        $segment = new LeadList();
+        $segment->setName($segmentDetails['name']);
+        $segment->setPublicName($segmentDetails['name']);
+        $segment->setAlias($segmentDetails['alias']);
+        $segment->setCreatedBy($this->adminUser);
+
+        if (!empty($segmentDetails['filters'])) {
+            $segment->setFilters($segmentDetails['filters']);
+        }
+
+        $this->entityManager->persist($segment);
+        $this->entityManager->flush();
+
+        return $segment;
     }
 }

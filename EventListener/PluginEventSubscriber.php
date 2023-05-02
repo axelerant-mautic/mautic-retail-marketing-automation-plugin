@@ -51,7 +51,7 @@ final class PluginEventSubscriber implements EventSubscriberInterface
         $customObjects = $pluginRepo->findByBundle('CustomObjectsBundle');
 
         if ($customObjects instanceof Plugin && true !== $customObjects->getIsMissing()) {
-            $this->generateEntities->createCustomObjectAndFields();
+            $this->generateEntities->loadDefaults();
         } else {
             throw new PluginNotFoundException('Please add missing CustomObjectsBundle.');
         }
