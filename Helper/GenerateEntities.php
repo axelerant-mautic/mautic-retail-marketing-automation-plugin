@@ -27,7 +27,10 @@ final class GenerateEntities
         // Custom Object
         $abandonedProduct = $this->loadCustomObject();
         // Segments
-        list($primaryList, $reminderList) = $this->loadSegments($abandonedProduct);
+        $segment = $this->loadSegments($abandonedProduct);
+
+        $this->entityManager->flush();
+        $this->entityManager->clear();
     }
 
     private function loadCustomObject(): CustomObject
@@ -41,6 +44,7 @@ final class GenerateEntities
         $abandonedProduct->setCreatedByUser($this->adminUser);
 
         $this->entityManager->persist($abandonedProduct);
+        $this->entityManager->flush();
 
         // Create Custom Object fields
         $this->createCustomField($abandonedProduct, [
@@ -79,9 +83,6 @@ final class GenerateEntities
             'type'  => 'text',
         ]);
 
-        $this->entityManager->flush();
-        $this->entityManager->clear();
-
         return $abandonedProduct;
     }
 
@@ -98,13 +99,12 @@ final class GenerateEntities
         $cf->setType($properties['type']);
         $cf->setRequired(false);
         $cf->setCreatedByUser($this->adminUser);
+
         $this->entityManager->persist($cf);
+        $this->entityManager->flush();
     }
 
-    /**
-     * @return LeadList[]
-     */
-    private function loadSegments(CustomObject $abandonedProduct): array
+    private function loadSegments(CustomObject $abandonedProduct): LeadList
     {
         $segmentDetails = [
             'name'    => 'Abandoned Card Contacts',
@@ -124,15 +124,7 @@ final class GenerateEntities
             ],
         ];
 
-        $primarySegment  = $this->createSegment($segmentDetails);
-        $reminderSeg     = $this->createSegment([
-            'name'    => 'Abandoned Card Reminder',
-            'alias'   => 'abandoned_card_contacts_reminder',
-        ]);
-
-        $this->entityManager->clear();
-
-        return [$primarySegment, $reminderSeg];
+        return $this->createSegment($segmentDetails);
     }
 
     /**
