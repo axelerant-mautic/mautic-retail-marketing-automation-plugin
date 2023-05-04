@@ -83,6 +83,12 @@ final class GenerateEntities
             'type'  => 'text',
         ]);
 
+        $this->createCustomField($abandonedProduct, [
+            'alias' => 'checkout_link',
+            'label' => 'Checkout Link',
+            'type'  => 'url',
+        ]);
+
         return $abandonedProduct;
     }
 
