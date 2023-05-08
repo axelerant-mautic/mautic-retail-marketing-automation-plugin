@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use MauticPlugin\RetailMarketingBundle\EventListener\PluginEventSubscriber;
+use MauticPlugin\RetailMarketingBundle\EventListener\TokenSubscriber;
 use MauticPlugin\RetailMarketingBundle\Helper\GenerateEntities;
+use MauticPlugin\RetailMarketingBundle\Helper\TokenParser;
 use MauticPlugin\RetailMarketingBundle\Integration\RetailMarketingIntegration;
 use MauticPlugin\RetailMarketingBundle\Integration\Support\ConfigSupport;
 
@@ -41,6 +43,16 @@ return [
                     'retail_marketing.helper.generate_entities',
                 ],
             ],
+            'retail_marketing.emailtoken.subscriber' => [
+                'class'     => TokenSubscriber::class,
+                'arguments' => [
+                    'mautic.custom.model.object',
+                    'mautic.custom.model.item',
+                    'mautic.custom.model.field.value',
+                    'retail_marketing.token.parser',
+                    'retail_marketing.helper.token_formatter',
+                ],
+            ],
         ],
 
         'other' => [
@@ -48,6 +60,15 @@ return [
                 'class'     => GenerateEntities::class,
                 'arguments' => [
                     'doctrine.orm.entity_manager',
+                ],
+            ],
+            'retail_marketing.token.parser' => [
+                'class' => TokenParser::class,
+            ],
+            'retail_marketing.helper.token_formatter' => [
+                'class'     => \MauticPlugin\RetailMarketingBundle\Helper\TokenFormatter::class,
+                'arguments' => [
+                    'twig',
                 ],
             ],
         ],
