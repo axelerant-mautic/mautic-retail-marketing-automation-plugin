@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
+use MauticPlugin\RetailMarketingBundle\EventListener\ApiSubscriber;
 use MauticPlugin\RetailMarketingBundle\EventListener\PluginEventSubscriber;
 use MauticPlugin\RetailMarketingBundle\EventListener\TokenSubscriber;
 use MauticPlugin\RetailMarketingBundle\Helper\GenerateEntities;
+use MauticPlugin\RetailMarketingBundle\Helper\TokenFormatter;
 use MauticPlugin\RetailMarketingBundle\Helper\TokenParser;
 use MauticPlugin\RetailMarketingBundle\Integration\RetailMarketingIntegration;
 use MauticPlugin\RetailMarketingBundle\Integration\Support\ConfigSupport;
@@ -53,6 +55,14 @@ return [
                     'retail_marketing.helper.token_formatter',
                 ],
             ],
+            'retail_marketing.api.subscriber' => [
+                'class'     => ApiSubscriber::class,
+                'arguments' => [
+                    'custom_object.config.provider',
+                    'mautic.custom.model.object',
+                    'mautic.custom.model.item',
+                ],
+            ],
         ],
 
         'other' => [
@@ -66,7 +76,7 @@ return [
                 'class' => TokenParser::class,
             ],
             'retail_marketing.helper.token_formatter' => [
-                'class'     => \MauticPlugin\RetailMarketingBundle\Helper\TokenFormatter::class,
+                'class'     => TokenFormatter::class,
                 'arguments' => [
                     'twig',
                 ],

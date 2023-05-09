@@ -91,7 +91,7 @@ HTTML;
             'alias'            => 'sku',
             'label'            => 'SKU',
             'type'             => 'text',
-            'uniqueIdentifier' => true
+            'uniqueIdentifier' => true,
         ]);
 
         $this->createCustomField($abandonedProduct, [
