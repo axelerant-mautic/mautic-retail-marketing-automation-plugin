@@ -16,7 +16,8 @@
     "require": {
         "php": ">=7.3 <7.5",
         "ext-mbstring": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "acquia/mc-cs-plugin-custom-objects": "^1.0"
     },
     "minimum-stability": "stable",
     "scripts": {
