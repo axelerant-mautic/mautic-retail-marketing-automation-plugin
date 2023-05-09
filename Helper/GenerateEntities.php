@@ -88,9 +88,10 @@ HTTML;
         ]);
 
         $this->createCustomField($abandonedProduct, [
-            'alias' => 'sku',
-            'label' => 'SKU',
-            'type'  => 'text',
+            'alias'            => 'sku',
+            'label'            => 'SKU',
+            'type'             => 'text',
+            'uniqueIdentifier' => true
         ]);
 
         $this->createCustomField($abandonedProduct, [
@@ -115,7 +116,7 @@ HTTML;
     }
 
     /**
-     * @param array<string, string> $properties
+     * @param array<string, string|bool> $properties
      */
     private function createCustomField(CustomObject $abandonedProduct, array $properties): void
     {
@@ -130,6 +131,11 @@ HTTML;
         $cf->setModifiedBy($this->adminUser);
         $cf->setDateAdded(new \DateTime());
         $cf->setDateModified(new \DateTime());
+
+        if (isset($properties['uniqueIdentifier']) && true === $properties['uniqueIdentifier']) {
+            $cf->setIsUniqueIdentifier(true);
+            $cf->setRequired(true);
+        }
 
         $this->entityManager->persist($cf);
         $this->entityManager->flush();
