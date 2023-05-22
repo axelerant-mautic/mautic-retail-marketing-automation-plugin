@@ -30,7 +30,7 @@ Requirements
 
 1. Mautic version 4 and onwards
 2. Enable the API or Basic Auth
-3. [Custom Object plugin][PluginCustomObjectsHome] stable version
+3. [Custom Object plugin][PluginCustomObjectsHome] stable version. The **Custom Object plugin** should be installed prior to installation of `RetailMarketingBundle`.
 
 ### Retail Marketing Automation
 
@@ -40,10 +40,9 @@ The integration should send a payload as per [this example](Docs/abandoned-cart.
 Installation
 ------------
 
-1. Add `CustomObjectsBundle` in `plugins` directory if not present.
-2. Add `RetailMarketingBundle` in `plugins` directory. 
-3. Go to `Plugins` page 
-4. Click on `Install/Upgrade Plugins` button, and install `RetailMarketingBundle` plugin.
+1. Add `RetailMarketingBundle` in `plugins` directory.
+2. Go to `Plugins` page
+3. Click on `Install/Upgrade Plugins` button, and install `RetailMarketingBundle` plugin.
 
 If you have shell access then execute `php bin\console mautic:plugins:reload` to install the plugin.
 
