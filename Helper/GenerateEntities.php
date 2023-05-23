@@ -91,7 +91,6 @@ HTTML;
             'alias'            => 'sku',
             'label'            => 'SKU',
             'type'             => 'text',
-            'uniqueIdentifier' => true,
         ]);
 
         $this->createCustomField($abandonedProduct, [
@@ -131,11 +130,6 @@ HTTML;
         $cf->setModifiedBy($this->adminUser);
         $cf->setDateAdded(new \DateTime());
         $cf->setDateModified(new \DateTime());
-
-        if (isset($properties['uniqueIdentifier']) && true === $properties['uniqueIdentifier']) {
-            $cf->setIsUniqueIdentifier(true);
-            $cf->setRequired(true);
-        }
 
         $this->entityManager->persist($cf);
         $this->entityManager->flush();
@@ -293,26 +287,6 @@ HTTML;
         $this->entityManager->persist($event3);
         $this->entityManager->flush();
 
-        // Remove from segment
-        $details = [
-            'name'       => 'Remove Contact from list',
-            'type'       => 'lead.changelist',
-            'eventType'  => Event::TYPE_ACTION,
-            'order'      => 4,
-            'properties' => [
-                'addToLists'      => [],
-                'removeFromLists' => [$segment->getId()],
-                'properties'      => [
-                    'addToLists'      => [],
-                    'removeFromLists' => [$segment->getId()],
-                ],
-            ],
-        ];
-        $event4 = $this->createEvent($campaign, $details);
-        $event4->setDecisionPath('yes');
-        $event4->setParent($event2);
-        $this->entityManager->persist($event4);
-
         $campaign->setCanvasSettings([
             'nodes' => [
                 [
@@ -328,11 +302,6 @@ HTTML;
                 [
                     'id'        => $event3->getId(),
                     'positionX' => '900',
-                    'positionY' => '350',
-                ],
-                [
-                    'id'        => $event4->getId(),
-                    'positionX' => '600',
                     'positionY' => '350',
                 ],
                 [
@@ -363,14 +332,6 @@ HTTML;
                     'targetId' => $event3->getId(),
                     'anchors'  => [
                         'source' => 'no',
-                        'target' => 'top',
-                    ],
-                ],
-                [
-                    'sourceId' => $event2->getId(),
-                    'targetId' => $event4->getId(),
-                    'anchors'  => [
-                        'source' => 'yes',
                         'target' => 'top',
                     ],
                 ],
