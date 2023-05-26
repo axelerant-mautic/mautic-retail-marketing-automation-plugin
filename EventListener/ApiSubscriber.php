@@ -39,18 +39,16 @@ class ApiSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            ApiEvents::API_ON_ENTITY_PRE_SAVE  => 'unLinkOutDatedAbandonProducts',
+            ApiEvents::API_ON_ENTITY_PRE_SAVE  => 'unLinkProducts',
         ];
     }
 
     /**
-     * Unlink the Abandon card product Custom Items.
-     *
-     * Unlinks the previously linked Abandon card products.
+     * Unlink the Product Custom Items from Contact.
      *
      * @throws NotFoundException
      */
-    public function unLinkOutDatedAbandonProducts(ApiEntityEvent $event): void
+    public function unLinkProducts(ApiEntityEvent $event): void
     {
         try {
             $customObjects = $this->getCustomObjectsFromContactCreateRequest(
@@ -116,7 +114,7 @@ class ApiSubscriber implements EventSubscriberInterface
         }
 
         return array_filter($entityRequestParameters['customObjects']['data'], function ($item) {
-            return 'abandoned_product' === $item['alias'];
+            return 'product' === $item['alias'];
         });
     }
 
@@ -125,7 +123,7 @@ class ApiSubscriber implements EventSubscriberInterface
      */
     private function getCustomItems(Lead $contact): array
     {
-        $customObject = $this->customObjectModel->getRepository()->findOneBy(['alias' => 'abandoned_product']);
+        $customObject = $this->customObjectModel->getRepository()->findOneBy(['alias' => 'product']);
 
         $tableConfig = new TableConfig(self::LIMIT, 1, 'CustomItem.id');
         $tableConfig->addParameter('customObjectId', $customObject->getId());

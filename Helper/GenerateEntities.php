@@ -11,10 +11,17 @@ use Mautic\EmailBundle\Entity\Email;
 use Mautic\LeadBundle\Entity\LeadList;
 use Mautic\UserBundle\Entity\User;
 use MauticPlugin\CustomObjectsBundle\Entity\CustomField;
+use MauticPlugin\CustomObjectsBundle\Entity\CustomFieldOption;
 use MauticPlugin\CustomObjectsBundle\Entity\CustomObject;
 
 final class GenerateEntities
 {
+    const ABANDONED_LABEL = 'Abandoned';
+    const ABANDONED_VALUE = 'abandoned';
+    const WISHLIST_LABEL  = 'Wishlist';
+    const WISHLIST_VALUE  = 'wishlist';
+    const REVIEW_LABEL    = 'Review';
+    const REVIEW_VALUE    = 'review';
     private EntityManagerInterface $entityManager;
     private User $adminUser;
 
@@ -28,9 +35,10 @@ final class GenerateEntities
     public function loadDefaults(): void
     {
         // Custom Object
-        $abandonedProduct = $this->loadCustomObject();
+        $product = $this->loadCustomObject();
+
         // Segments
-        $segment = $this->loadSegments($abandonedProduct);
+        $segment = $this->loadSegments($product);
 
         // Email first reminder.
         $html = <<<HTTML
@@ -58,64 +66,86 @@ HTTML;
     private function loadCustomObject(): CustomObject
     {
         // Create Custom Object
-        $abandonedProduct = new CustomObject();
-        $abandonedProduct->setAlias('abandoned_product');
-        $abandonedProduct->setNameSingular('Abandoned Product');
-        $abandonedProduct->setNamePlural('Abandoned Products');
-        $abandonedProduct->setDescription('Hold details about Abandoned Products');
-        $abandonedProduct->setCreatedByUser($this->adminUser);
+        $product = new CustomObject();
+        $product->setAlias('product');
+        $product->setNameSingular('Product');
+        $product->setNamePlural('Products');
+        $product->setDescription('Details about Products');
+        $product->setCreatedByUser($this->adminUser);
 
-        $this->entityManager->persist($abandonedProduct);
+        $this->entityManager->persist($product);
         $this->entityManager->flush();
 
         // Create Custom Object fields
-        $this->createCustomField($abandonedProduct, [
+        $this->createCustomField($product, [
+            'alias'   => 'type',
+            'label'   => 'Type',
+            'type'    => 'select',
+            'options' => [
+                'list' => [
+                    [
+                        'label' => self::ABANDONED_LABEL,
+                        'value' => self::ABANDONED_VALUE,
+                    ],
+                    [
+                        'label' => self::WISHLIST_LABEL,
+                        'value' => self::WISHLIST_VALUE,
+                    ],
+                    [
+                        'label' => self::REVIEW_LABEL,
+                        'value' => self::REVIEW_VALUE,
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->createCustomField($product, [
             'alias' => 'description',
             'label' => 'Description',
             'type'  => 'textarea',
         ]);
 
-        $this->createCustomField($abandonedProduct, [
+        $this->createCustomField($product, [
             'alias' => 'link',
             'label' => 'Link',
             'type'  => 'url',
         ]);
 
-        $this->createCustomField($abandonedProduct, [
+        $this->createCustomField($product, [
             'alias' => 'thumbnail',
             'label' => 'Thumbnail Image',
             'type'  => 'url',
         ]);
 
-        $this->createCustomField($abandonedProduct, [
+        $this->createCustomField($product, [
             'alias'            => 'sku',
             'label'            => 'SKU',
             'type'             => 'text',
         ]);
 
-        $this->createCustomField($abandonedProduct, [
+        $this->createCustomField($product, [
             'alias' => 'quantity',
             'label' => 'Quantity',
             'type'  => 'text',
         ]);
 
-        $this->createCustomField($abandonedProduct, [
+        $this->createCustomField($product, [
             'alias' => 'price',
             'label' => 'Price',
             'type'  => 'text',
         ]);
 
-        $this->createCustomField($abandonedProduct, [
+        $this->createCustomField($product, [
             'alias' => 'checkout_link',
             'label' => 'Checkout Link',
             'type'  => 'url',
         ]);
 
-        return $abandonedProduct;
+        return $product;
     }
 
     /**
-     * @param array<string, string|bool> $properties
+     * @param array<string, mixed> $properties
      */
     private function createCustomField(CustomObject $abandonedProduct, array $properties): void
     {
@@ -131,11 +161,29 @@ HTTML;
         $cf->setDateAdded(new \DateTime());
         $cf->setDateModified(new \DateTime());
 
+        if (!empty($properties['options']['list'])) {
+            foreach ($properties['options']['list'] as $key => $option) {
+                $this->createCustomFieldOption($cf, $option['label'], $option['value'], $key);
+            }
+        }
+
         $this->entityManager->persist($cf);
+
         $this->entityManager->flush();
     }
 
-    private function loadSegments(CustomObject $abandonedProduct): LeadList
+    private function createCustomFieldOption(CustomField $customField, string $label, string $value, int $order): void
+    {
+        $customFieldOption = new CustomFieldOption();
+        $customFieldOption->setCustomField($customField);
+        $customFieldOption->setLabel($label);
+        $customFieldOption->setValue($value);
+        $customFieldOption->setOrder($order);
+
+        $this->entityManager->persist($customFieldOption);
+    }
+
+    private function loadSegments(CustomObject $product): LeadList
     {
         $segmentDetails = [
             'name'    => 'Abandoned Card Contacts',
@@ -143,7 +191,7 @@ HTTML;
             'filters' => [
                 [
                     'glue'       => 'and',
-                    'field'      => 'cmo_'.$abandonedProduct->getId(), // Name field of CO.
+                    'field'      => 'cmo_'.$product->getId(), // Name field of CO.
                     'object'     => 'custom_object',
                     'type'       => 'text',
                     'operator'   => '!empty',

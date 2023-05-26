@@ -17,8 +17,8 @@ This plugin is to add Retail Marketing automation flows into [Mautic][MauticHome
 The plugin depends on [Custom Object plugin][PluginCustomObjectsHome].
 
 When enable this plugin will create the followings,
-1. [Abandoned Cart](Docs/abandoned-cart.md) object as custom object
-2. Segment to create a abandoned card customer list
+1. [Product](Docs/custom-object-product.md) object as custom object
+2. Segment to create a Product card customer list
 3. Email with [token](Docs/token.md) that replaces the list of products
 4. [Campaign](Docs/campaign.md)
 
@@ -34,7 +34,7 @@ Requirements
 
 ### Retail Marketing Automation
 
-The integration should send a payload as per [this example](Docs/abandoned-cart.md#usage).
+The integration should send a payload as per [this example](Docs/custom-object-product.md#usage).
 
 
 Installation

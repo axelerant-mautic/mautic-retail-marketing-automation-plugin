@@ -3,6 +3,6 @@ The plugin provides the token to be used in emails. The token is `{custom-object
 ## Usage
 
 Use the following token in email,
-`{custom-object-list=adandoned_cart}`.
+`{custom-object-list=product}`.
 
-This will inject the abandoned product listing into email body. See ![here](imgs/02-token-replacement.png)
+This will inject the product listing into email body. See ![here](imgs/02-token-replacement.png)

@@ -1,24 +1,35 @@
 Introduction
 ------------
 
-This Plugin creates an Abandoned cart custom object. Please find the details as follows,
+This Plugin creates an Product custom object. Please find the details as follows,
 
 ## Custom object
 
-1. Name: `Abandoned Product`
-2. Alias: `abandoned_product`
+1. Name: `Product`
+2. Alias: `product`
 3. Fields:
 
-| Label           | Alias         | Type     | Unique Identifier  | Required           | 
-|-----------------|---------------|----------|--------------------|--------------------|
-| Name            | name          | Text     | :x:                | :x:                |
-| Description     | description   | TextArea | :x:                | :x:                |
-| Link            | link          | URL      | :x:                | :x:                |
-| Thumbnail Image | thumbnail     | URL      | :x:                | :x:                |
-| SKU             | sku           | Text     | :white_check_mark: | :white_check_mark: |
-| Quantity        | quantity      | Text     | :x:                | :x:                |
-| Price           | price         | Text     | :x:                | :x:                |
-| Checkout Link   | checkout_link | URL      | :x:                | :x:                | 
+| Label           | Alias         | Type     | Unique Identifier | Required | 
+|-----------------|---------------|----------|-------------------|----------|
+| Name            | name          | Text     | :x:               | :x:      |
+| Description     | description   | TextArea | :x:               | :x:      |
+| Link            | link          | URL      | :x:               | :x:      |
+| Thumbnail Image | thumbnail     | URL      | :x:               | :x:      |
+| SKU             | sku           | Text     | :x:               | :x:      |
+| Quantity        | quantity      | Text     | :x:               | :x:      |
+| Price           | price         | Text     | :x:               | :x:      |
+| Checkout Link   | checkout_link | URL      | :x:               | :x:      |
+| Type            | type          | Select   | :x:               | :x:      |
+
+The field Type has the following options,
+
+| Label     | Value     |
+|-----------|-----------|
+| Abandoned | abandoned |
+| Wishlist  | wishlist  |
+| Review    | review    |
+
+The above types will differentiate the product and there usage.
 
 ## [Usage](#usage)
 
@@ -35,11 +46,12 @@ curl --location '<mautic-innstance-host>/api/contacts/new?includeCustomObjects=t
     "customObjects": {
         "data": [
             {
-                "alias": "abandoned_product",
+                "alias": "product",
                 "data": [
                     {
                         "name": "<AP One>",
                         "attributes": {
+                            "type: "abandoned",
                             "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
                             "link": "https://www.e-commerce-example.com/path/to/product/one",
                             "thumbnail": "https://www.e-commerce-example.com/path/to/image/product/one.jpg",
@@ -52,11 +64,12 @@ curl --location '<mautic-innstance-host>/api/contacts/new?includeCustomObjects=t
                 ]
             },
             {
-                "alias": "abandoned_product",
+                "alias": "product",
                 "data": [
                     {
                         "name": "Product two",
                         "attributes": {
+                            "type: "wishlist",
                             "description": "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                             "link": "https://www.e-commerce-example.com/path/to/product/two",
                             "thumbnail": "https://www.e-commerce-example.com/path/to/image/product/two.jpg",
