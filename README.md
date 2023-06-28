@@ -55,15 +55,20 @@ Enable the plugin.
 
 FAQ
 ---
+**Question:** Will I be able to add more custom fields other than default fields?
 
- -
+**Answer:** Yes, you can. Please custom object document to add more fields
 
 
 Maintainers
 -----------
 
 1. Rahul Shinde, [Axelerant Technologies][AxelerantHome]
+2. Prateek Jain, [Axelerant Technologies][AxelerantHome]
+3. Abhisek Dhariwal, [Axelerant Technologies][AxelerantHome]
+4. Gaurav Chauhan, [Axelerant Technologies][AxelerantHome]
+5. Jitesh Khatwani, [Axelerant Technologies][AxelerantHome]
 
 [MauticHome]: <https://www.mautic.org>
-[AxelerantHome]: <https://axelerat.com>
+[AxelerantHome]: <https://axelerant.com>
 [PluginCustomObjectsHome]: <https://github.com/acquia/mc-cs-plugin-custom-objects>
