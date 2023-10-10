@@ -54,10 +54,8 @@ class PublicController extends CommonController
         }
         foreach ($data as $formField => $formValue) {
             if (in_array($formField, $multi_select_field)) {
-                $tag_entity = new Tag();
-                $tag = $tag_entity->setTag($formValue);
-                $lead->addTag($tag);
-            }
+                $tag_entity = new Tag($formValue);
+                $lead->addTag($tag_entity);
             else {
                 $lead->addUpdatedField($formField, $formValue, null);
             }
