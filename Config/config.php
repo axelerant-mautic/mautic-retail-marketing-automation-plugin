@@ -16,6 +16,17 @@ return [
     'description' => 'Creates and helps the Retail Marketing Automation flows in Mautic.',
     'version'     => '0.0.1',
     'author'      => 'Axelerant Technologies',
+    'routes'      => [
+        'main'   => [],
+        'public' => [
+            // The webhook event listener.
+            'mautic_winback_webhook' => [
+                'path'       => '/plugin/winback/webhook',
+                'controller' => 'RetailMarketingBundle:Public:webhookPayload',
+            ],
+        ],
+        'api'    => [],
+    ],
 
     'services' => [
         'integrations' => [
@@ -79,6 +90,19 @@ return [
                 'class'     => TokenFormatter::class,
                 'arguments' => [
                     'twig',
+                ],
+            ],
+        ],
+
+        'controllers' => [
+            // Webhook controller to listen the facebook lead data.
+            'retail_marketing.integration.controller.public' => [
+                'class'       => \MauticPlugin\RetailMarketingBundle\Controller\PublicController::class,
+                'arguments'   => [],
+                'methodCalls' => [
+                    'setContainer' => [
+                        '@service_container',
+                    ],
                 ],
             ],
         ],
