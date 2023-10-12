@@ -25,11 +25,19 @@ class PublicController extends CommonController
             'email',
             'firstname',
             'lastname',
-            'tags'
+            'win_back_customers',
         ];
         foreach ($mautic_data as $mautic_field) {
-            $data[$mautic_field] = $request->get($mautic_field);
+            $field_value = $request->get($mautic_field);
+            if ($mautic_field == 'win_back_customers') {
+                if ($request->get($mautic_field))
+                    $field_value = 1;
+                else
+                    $field_value = 0;
+            }
+            $data[$mautic_field] = $field_value;
         }
+        file_put_contents('logs.txt', $request.PHP_EOL , FILE_APPEND | LOCK_EX);
 
         //initialize the lead model
         $leadModel = $this->getModel('lead');
@@ -58,14 +66,7 @@ class PublicController extends CommonController
         }
 
         foreach ($data as $formField => $formValue) {
-            if (in_array($formField, $multi_select_field)) {
-                $tag_entity = new Tag($formValue);
-                $lead->addTag($tag_entity);
-            }
-            else {
-                $lead->addUpdatedField($formField, $formValue, null);
-            }
-
+            $lead->addUpdatedField($formField, $formValue, null);
         }
 
         $flag = true;
